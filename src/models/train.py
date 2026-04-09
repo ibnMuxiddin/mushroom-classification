@@ -12,14 +12,12 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 
-from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score, f1_score, precision_score
 
 import time
 
 from src.data.load import load_raw_data
 from src.data.preprocess import clean_data
-from src.features.build_features import create_features
 
 
 def main():
@@ -79,22 +77,27 @@ def main():
             ("model", model)
         ])
 
-        start = time.time()
+        start_tr = time.time()
         pipeline.fit(X_train, y_train)
-        end = time.time()
+        end_tr = time.time()
 
+        start_pr = time.time()
         y_predict = pipeline.predict(X_test)
+        end_pr = time.time()
 
-        #accur = accuracy_score(y_test, y_predict)
+        accur = accuracy_score(y_test, y_predict)
         f1_sco = f1_score(y_test, y_predict, average="weighted")
         prec = precision_score(y_test, y_predict, average="weighted")
-        train_time = end - start
+        train_time = end_tr - start_tr
+        predict_time = end_pr-start_pr
 
         result.append({
             "name": name,
+            "accur": accur,
             "f1-score": f1_sco,
             "precision": prec,
-            "time": train_time
+            "train_time": train_time,
+            "predict_time": predict_time
         })
 
     # Show results
